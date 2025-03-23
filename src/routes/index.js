@@ -1,17 +1,16 @@
 const express = require('express')
-const mainController = require('../controllers/mainController')
-const getController = require('../controllers/getController')
+const { uploadImage, getImage } = require('../controllers/ImageController')
+const CardController = require('../controllers/CardController')
 const router = express.Router()
 
-router.get('/gallery', getController.getGallery); // добавить query параметры
-router.get('/gallery/:id', getController.getCard);
-router.get('/images/:id', getController.getImage); // вроде всё норм
+router.get('/gallery', CardController.getGallery);
+router.get('/gallery/:id', CardController.getCard);
+router.post('/gallery', CardController.createCard);
+router.patch('/gallery/:id', CardController.udpateCard);
 
-router.post('/image-upload', mainController.uploadImage); // вроде всё норм, мб реализовать удалиение старых картинок и сделать subFolders 
-router.post('/gallery', mainController.createCard); // не работает на фронте
+router.post('/image-upload', uploadImage);
+router.get('/images/:id', getImage);
+router.delete('/gallery/:id', CardController.deleteCard); 
 
-router.delete('/gallery/:id', mainController.deleteCard); 
-
-router.patch('/gallery/:id', mainController.udpateCard);  // надо вернуть старый id
 
 module.exports = router
