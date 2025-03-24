@@ -24,18 +24,6 @@ const mockData = {
 };
 
 describe('Card API GET', () => {
-    // let poolStub;
-
-    // beforeEach(() => {
-    //     poolStub = sinon.stub(pool, 'query');
-    //     // server.listen(7070, done);
-    // });
-
-    // afterEach(() => {
-    //     poolStub.restore();
-    //     // server.close(done)
-    // });
-
 
     it('GET /gallery', async() => {
         const res = await request(server).get('/gallery');

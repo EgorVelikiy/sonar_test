@@ -149,7 +149,7 @@ describe('Card API Post/patch', () => {
         };
         
         const res = await request(server).delete(`/gallery/100`)
-        
+        console.log(res.body)
         expect(res.status).to.equal(204);
     })
 })
