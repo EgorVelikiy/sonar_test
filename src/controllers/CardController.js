@@ -23,8 +23,8 @@ exports.getGallery = async (req, res) => {
     }
 
     try {
-        const result = await pool.query(query, queryParams);
 
+        const result = await pool.query(query, queryParams);
         const gallery = result.rows.map(row => ({
             id: row.id.toString(),
             plate: row.plate,

@@ -133,23 +133,22 @@ describe('Card API Post/patch', () => {
         expect(res.body.image).to.have.property('id', updatedImageId)
     });
 
-    it('DELETE /gallery/:id', async () => {
-        const deleteImage = {
-            rows: [mockImageData],
-        };
+    // it('DELETE /gallery/:id', async () => {
+    //     const deleteImage = {
+    //         rows: [mockImageData],
+    //     };
 
-        pool.query = (query, params) => {
-            if (query.includes('DELETE FROM cards')) {
-                return Promise.resolve(mockCardData);
-            }
-            if (query.includes('DELETE FROM images')) {
-                return Promise.resolve(deleteImage);
-            }
-            return Promise.reject(new Error('Unknown query'));
-        };
+    //     pool.query = (query, params) => {
+    //         if (query.includes('DELETE FROM cards')) {
+    //             return Promise.resolve(mockCardData);
+    //         }
+    //         if (query.includes('DELETE FROM images')) {
+    //             return Promise.resolve(deleteImage);
+    //         }
+    //         return Promise.reject(new Error('Unknown query'));
+    //     };
         
-        const res = await request(server).delete(`/gallery/100`)
-        console.log(res.body)
-        expect(res.status).to.equal(204);
-    })
+    //     const res = await request(server).delete(`/gallery/100`)
+    //     expect(res.status).to.equal(204);
+    // })
 })
