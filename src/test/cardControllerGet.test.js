@@ -85,7 +85,6 @@ describe('Card API GET', () => {
 
         const res = await request(server).get('/gallery/1');
         expect(res.status).to.equal(200);
-        console.log(res.body)
         expect(res.body).to.have.property('id', '1')
     });
 })
