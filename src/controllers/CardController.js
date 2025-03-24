@@ -107,7 +107,7 @@ exports.deleteCard = async (req, res) => {
         await pool.query('DELETE FROM cards WHERE card_id = $1', [id]);
 
         const image_id = result.rows[0].image_id
-        
+
         if (uploadImages[image_id]) {
             const imagePath = path.join(__dirname, '../../public', image_id + uploadImages[image_id].format);
             fs.unlink(imagePath, (err) => {
@@ -119,7 +119,6 @@ exports.deleteCard = async (req, res) => {
 
             delete uploadImages[image_id]
         }
-        
         res.status(204).send();
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -130,17 +129,19 @@ exports.udpateCard = async (req, res) => {
     const { plate, image} = req.body.data;
     const { id } = req.params
 
-    const fileUrl = uploadImages[image].url;
-
     const updateCardQuery = `UPDATE Cards SET plate = $1 WHERE card_id = $2 RETURNING *`;
     let updateImageQuery = `SELECT * FROM Images WHERE card_id = ${id}`
 
-    let cardParams = [plate, id]
-    let imageParams = []
+    let cardParams = [plate, id];
+    let imageParams = [];
 
-    if (id !== image) {
+    const oldImageId = await pool.query(`SELECT image_id FROM Images WHERE card_id = $1`, [id]);
+    const oldImageIdResult = oldImageId.rows[0].image_id
+
+    if (oldImageIdResult !== image) {
+        newfileUrl = uploadImages[image].url;
         updateImageQuery = `UPDATE Images SET image_id = $1, url = $2 WHERE card_id = $3 RETURNING *`;
-        imageParams.push(image, fileUrl, id)
+        imageParams.push(image, newfileUrl, id)
     }
 
     try {
@@ -148,11 +149,11 @@ exports.udpateCard = async (req, res) => {
         const updateImageResult = await pool.query(updateImageQuery, imageParams)
         
         const data = {
-            id: updateCardResult.rows[0].card_id.toString(),
+            id: updateCardResult.rows[0].card_id,
             plate: updateCardResult.rows[0].plate,
             image: {
-                id: updateImageResult.rows[0].image_id.toString(),
-                url: updateImageResult.rows[0].url.toString(),
+                id: updateImageResult.rows[0].image_id,
+                url: updateImageResult.rows[0].url,
             },
             createdAt: updateCardResult.rows[0].createdAt,
         }

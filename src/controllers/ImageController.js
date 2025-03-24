@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
   
 const upload = multer({ storage: storage });
 
-uploadImage = async (req, res) => {
+const uploadImage = async (req, res) => {
     upload.single('file') (req, res, async(err) => {
         if (!req.file) {
             return res.status(400).send('No file uploaded.');
@@ -36,7 +36,7 @@ uploadImage = async (req, res) => {
     });
 };
 
-getImage = async (req, res) => {
+const getImage = async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query('SELECT CAST(image_id as varchar) as id, url FROM images WHERE image_id = $1', [id]);
@@ -56,4 +56,5 @@ module.exports = {
     uploadImages,
     uploadImage,
     getImage,
+    upload
 }
