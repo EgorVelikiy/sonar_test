@@ -12,9 +12,7 @@ const pool = new Pool({
 });
 
 pool.query('SELECT NOW()', (err, res) => {
-  if(err) {
-    console.error('Error connecting to the database', err.stack);
-  } else {
+  if (!err) {
     console.log('Connected to the database:', res.rows);
   }
 });

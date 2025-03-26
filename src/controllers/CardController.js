@@ -111,8 +111,7 @@ exports.deleteCard = async (req, res) => {
         if (uploadImages[image_id]) {
             const imagePath = path.join(__dirname, '../../public', image_id + uploadImages[image_id].format);
             fs.unlink(imagePath, (err) => {
-                if (err) console.log(err);
-                else {
+                if (!err) {
                     console.log('Image deleted');
                 }
             })
