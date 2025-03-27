@@ -3,7 +3,6 @@ name: Backend CI Pipeline
 on:
   push:
     branches:
-      - "*"
       - main
   pull_request:
     branches:
@@ -22,6 +21,18 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install dependencies
+        run: npm install
+  
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+        
       - name: Install dependencies
         run: npm install
 
