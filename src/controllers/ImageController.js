@@ -24,7 +24,7 @@ const uploadImage = async (req, res) => {
         };
 
         const fileName = req.file.filename
-        const fileUrl = `http://localhost:${process.env.PORT}/public/${fileName}`;
+        const fileUrl = `/public/${fileName}`;
         const id = path.basename(fileName, path.extname(fileName));
 
         uploadImages[id] = {
