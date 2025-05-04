@@ -36,7 +36,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: sarkiisov/devops-server:latest
+    image: sarkiisov/platesmania-backend:latest
     container_name: backend_app
     environment:
       DB_HOST: $DB_HOST
