@@ -35,7 +35,11 @@ exports.getGallery = async (req, res) => {
             createdAt: row.createdAt,
         })); 
 
-        res.status(200).json(gallery);
+        if (gallery.length === 0) {
+            res.status(200).json(gallery);
+        } else {
+            res.status(200).json(gallery);
+        }
     } catch(err) {
         res.status(500).json({error: err.message})
     }
