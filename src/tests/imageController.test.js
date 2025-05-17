@@ -82,4 +82,14 @@ describe('Image API', () => {
         expect(res.status).to.equal(404);
         expect(res.body).to.have.property('error', 'Image not found');
     });
+
+    it('GET /images/:id 500', async () => {
+        pool.query = (query, params) => {
+            return Promise.reject(new Error());
+        };
+
+        const res = await request(app).get(`/images/1`);
+
+        expect(res.status).to.equal(500);
+    });
 })
