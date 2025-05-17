@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./src/tests/*.test.js --exit",
+    "test": "mocha ./src/tests/**/*.test.js --exit",
     "coverage": "nyc --reporter=lcov --reporter=text npm test",
     "dev": "nodemon ./src/server.js",
     "start": "node ./src/server.js"
