@@ -128,7 +128,7 @@ exports.udpateCard = async (req, res) => {
     const { id } = req.params
 
     const updateCardQuery = `UPDATE Cards SET plate = $1 WHERE card_id = $2 RETURNING *`;
-    let updateImageQuery = `SELECT * FROM Images WHERE card_id = ${id}`
+    let updateImageQuery = `SELECT * FROM Images WHERE card_id = $1`
 
     let cardParams = [plate, id];
     let imageParams = [];
