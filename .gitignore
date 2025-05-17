@@ -3,4 +3,5 @@ public/
 .env
 
 tests/fixtures/
+.nyc_output/
 coverage/
