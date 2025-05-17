@@ -1,6 +1,6 @@
 {
   "reporter": ["text", "html", "lcov"],
   "all": true,
-  "include": ["src/routes/**/*.js", "src/controllers/**/*.js"],
-  "exclude": ["src/test/**/*.js"]
+  "include": ["src/controllers/*.js"],
+  "exclude": ["src/tests/*.js"]
 }
