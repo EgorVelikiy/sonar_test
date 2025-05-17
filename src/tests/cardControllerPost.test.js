@@ -1,6 +1,6 @@
 const request = require('supertest');
 const { expect } = require('chai');
-const server = require('../server.js');
+const app = require('../server.js');
 const { uploadImages } = require('../controllers/ImageController.js');
 const pool = require('../config/db.config.js');
 
@@ -15,7 +15,6 @@ const mockCardData = {
             createdAt: new Date(),
         }
     ]
-    
 };
 
 const mockImageData = {
@@ -24,17 +23,12 @@ const mockImageData = {
     url: 'https://example-url.ru/image.jpg',
 };
 
-const updatedImageUrl = 'https://example-url1.ru/image.jpg';
+const updatedImageUrl = 'https://example-url1111.ru/image.jpg';
 const updatedImageId = '3aecb88c-0acc-43e5-b9cf-561994a4b090';
-
 
 describe('Card API Post/patch', () => {
 
-    afterEach(() => {
-
-    })
-
-    it('POST /gallery', async() => {
+    it('POST /gallery 200', async() => {
         const imageResult = {
             rows: [
                 {
@@ -61,7 +55,7 @@ describe('Card API Post/patch', () => {
             return Promise.reject(new Error('Unknown query'));
         };
       
-        const res = await request(server).post('/gallery')
+        const res = await request(app).post('/gallery')
             .send({
                 data: {
                     plate: 'в555вв55',
@@ -75,8 +69,24 @@ describe('Card API Post/patch', () => {
         expect(res.body.image).to.have.property('id', mockImageId);
         expect(res.body.image).to.have.property('url', mockImageUrl);
     });
+
+    it('POST /gallery 500', async() => {
+        pool.query = (query, params) => {
+            return Promise.reject(new Error());
+        }
+
+        const res = await request(app).post('/gallery')
+            .send({
+                data: {
+                    plate: 'в555вв55',
+                    image: mockImageId,
+                },
+            });
+
+        expect(res.status).to.equal(500)
+    });
     
-    it('PATCH /gallery/:id', async() => {
+    it('PATCH /gallery/:id 200', async() => {
         const newCardResult = {
             rows: [
                 {
@@ -117,7 +127,7 @@ describe('Card API Post/patch', () => {
             return Promise.reject(new Error('Unknown query'));
         };
 
-        const res = await request(server)
+        const res = await request(app)
             .patch(`/gallery/${mockCardData.rows[0].card_id}`)
             .send({
                 data: {
@@ -133,7 +143,24 @@ describe('Card API Post/patch', () => {
         expect(res.body.image).to.have.property('id', updatedImageId)
     });
 
-    it('DELETE /gallery/:id', async () => {
+    it('PATCH /gallery/:id 500', async() => {
+        pool.query = (query, params) => {
+            return Promise.reject(new Error());
+        };
+
+        const res = await request(app)
+            .patch(`/gallery/${mockCardData.rows[0].card_id}`)
+            .send({
+                data: {
+                    plate: 'б555бб55',
+                    image: updatedImageId,
+                },
+            });
+
+        expect(res.status).to.equal(500)
+    })
+
+    it('DELETE /gallery/:id 204', async () => {
         const deleteImage = {
             rows: [mockImageData],
         };
@@ -148,7 +175,17 @@ describe('Card API Post/patch', () => {
             return Promise.reject(new Error('Unknown query'));
         };
         
-        const res = await request(server).delete(`/gallery/100`)
+        const res = await request(app).delete(`/gallery/100`)
         expect(res.status).to.equal(204);
+    })
+
+    it('DELETE /gallery/:id 500', async () => {
+
+        pool.query = (query, params) => {
+            return Promise.reject(new Error());
+        };
+        
+        const res = await request(app).delete(`/gallery/100`)
+        expect(res.status).to.equal(500);
     })
 })

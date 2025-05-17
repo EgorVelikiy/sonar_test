@@ -1,8 +1,8 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const sinon = require('sinon')
-const server = require('../server.js');
 const pool = require('../config/db.config.js');
+const app = require('../server.js');
 
 const mockData = {
     rows: [
@@ -34,8 +34,7 @@ describe('Card API GET', () => {
         queryStub.restore()
     })
 
-    it('GET /gallery', async() => {
-
+    it('GET /gallery 200', async() => {
         pool.query = (query, params) => {
             if (query.includes('SELECT')) {
                 return Promise.resolve(mockData);
@@ -43,7 +42,7 @@ describe('Card API GET', () => {
             return Promise.reject(new Error('Unknown query'));
         };
 
-        const res = await request(server).get('/gallery');
+        const res = await request(app).get('/gallery');
 
         expect(res.status).to.equal(200);
         expect(res.body).to.be.an('array').that.has.lengthOf(2);
@@ -54,7 +53,8 @@ describe('Card API GET', () => {
         expect(queryStub.calledWithMatch('ILIKE')).to.be.false;
     });
 
-    it('GET /gallery with query', async() => {
+    
+    it('GET /gallery search 200', async() => {
         queryStub.resolves({
             rows: [
                 {
@@ -74,17 +74,40 @@ describe('Card API GET', () => {
             ],
         })
 
-        const res = await request(server).get('/gallery').query({ search: '8' });
+        const res = await request(app).get('/gallery').query({ search: '8' });
 
         expect(queryStub.calledWithMatch('ILIKE')).to.be.true;
         expect(res.status).to.equal(200);
     });
 
-    it('GET /gallery/:id', async() => {
+    it('GET /gallery search 500', async() => {
+        queryStub.resolves()
+
+        const res = await request(app).get('/gallery').query({ search: '7' });
+
+        expect(queryStub.calledWithMatch('ILIKE')).to.be.true;
+        expect(res.status).to.equal(500);
+    });
+
+    it('GET /gallery/:id 200', async() => {
         queryStub.resolves(mockData)
 
-        const res = await request(server).get('/gallery/1');
+        const res = await request(app).get('/gallery/1');
         expect(res.status).to.equal(200);
         expect(res.body).to.have.property('id', '1')
+    });
+
+    it('GET /gallery/:id 404', async() => {
+        queryStub.resolves({ rows: [] })
+
+        const res = await request(app).get('/gallery/2');
+        expect(res.status).to.equal(404);
+    });
+
+    it('GET /gallery/:id 500', async() => {
+        queryStub.resolves({ rows: mockData.rows[1] })
+
+        const res = await request(app).get('/gallery/2');
+        expect(res.status).to.equal(500);
     });
 })

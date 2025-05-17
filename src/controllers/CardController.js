@@ -23,7 +23,6 @@ exports.getGallery = async (req, res) => {
     }
 
     try {
-
         const result = await pool.query(query, queryParams);
         const gallery = result.rows.map(row => ({
             id: row.id.toString(),
@@ -35,11 +34,7 @@ exports.getGallery = async (req, res) => {
             createdAt: row.createdAt,
         })); 
 
-        if (gallery.length === 0) {
-            res.status(200).json(gallery);
-        } else {
-            res.status(200).json(gallery);
-        }
+        res.status(200).json(gallery);
     } catch(err) {
         res.status(500).json({error: err.message})
     }
@@ -138,19 +133,19 @@ exports.udpateCard = async (req, res) => {
     let cardParams = [plate, id];
     let imageParams = [];
 
-    const oldImageId = await pool.query(`SELECT image_id FROM Images WHERE card_id = $1`, [id]);
-    const oldImageIdResult = oldImageId.rows[0].image_id
-
-    if (oldImageIdResult !== image) {
-        newfileUrl = uploadImages[image].url;
-        updateImageQuery = `UPDATE Images SET image_id = $1, url = $2 WHERE card_id = $3 RETURNING *`;
-        imageParams.push(image, newfileUrl, id)
-    }
-
     try {
+        const oldImageId = await pool.query(`SELECT image_id FROM Images WHERE card_id = $1`, [id]);
+        const oldImageIdResult = oldImageId.rows[0].image_id
+
+        if (oldImageIdResult !== image) {
+            let newfileUrl = uploadImages[image].url;
+            updateImageQuery = `UPDATE Images SET image_id = $1, url = $2 WHERE card_id = $3 RETURNING *`;
+            imageParams.push(image, newfileUrl, id)
+        }
+
         const updateCardResult = await pool.query(updateCardQuery, cardParams)
         const updateImageResult = await pool.query(updateImageQuery, imageParams)
-        
+
         const data = {
             id: updateCardResult.rows[0].card_id,
             plate: updateCardResult.rows[0].plate,
@@ -160,7 +155,7 @@ exports.udpateCard = async (req, res) => {
             },
             createdAt: updateCardResult.rows[0].createdAt,
         }
-
+        
         res.status(200).json(data)
     } catch (err) {
         res.status(500).json({ error: err.message });

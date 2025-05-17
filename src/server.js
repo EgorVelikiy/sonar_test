@@ -8,7 +8,6 @@ const client = require('prom-client');
 const register = new client.Registry();
 client.collectDefaultMetrics({ register });
 
-
 const app = express();
 
 app.use('/public', express.static(path.join(__dirname, '../public')));
@@ -72,3 +71,4 @@ server.listen(port, () =>
 );
 
 module.exports = server;
+module.exports = app;

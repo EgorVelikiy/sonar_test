@@ -20,7 +20,7 @@ const upload = multer({ storage: storage });
 const uploadImage = async (req, res) => {
     upload.single('file') (req, res, async(err) => {
         if (!req.file) {
-            return res.status(400).send('No file uploaded.');
+            return res.status(400).send({ error: 'No file uploaded.' });
         };
 
         const fileName = req.file.filename
@@ -40,7 +40,7 @@ const getImage = async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query('SELECT CAST(image_id as varchar) as id, url FROM images WHERE image_id = $1', [id]);
-
+        
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Image not found' });
         };
