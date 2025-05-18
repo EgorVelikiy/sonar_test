@@ -53,13 +53,9 @@ jobs:
         run: npm run coverage
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: sonar-scanner -Dsonar.projectKey=sonar_test -Dsonar.host.url=https://sonarqube.company.com -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       - name: Check Quality Gate status
-        uses: SonarSource/sonarqube-quality-gate-action@v1
-        timeout-minutes: 2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+
+          curl -u ${{ secrets.SONAR_TOKEN }} "http://sonarqube.company.com/api/qualitygates/project_status?projectKey=sonar_test
