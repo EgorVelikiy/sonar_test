@@ -29,21 +29,6 @@
     "sinon": "^19.0.4",
     "uuid": "^11.1.0"
   },
-  "nyc": {
-    "reporter": [
-      "text",
-      "lcov",
-      "html"
-    ],
-    "all": true,
-    "include": [
-      "routes/**/*.js",
-      "controllers/**/*.js"
-    ],
-    "exclude": [
-      "test/**/*.js"
-    ]
-  },
   "devDependencies": {
     "mocha": "^11.1.0",
     "supertest": "^7.1.0"
