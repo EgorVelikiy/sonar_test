@@ -48,10 +48,17 @@ jobs:
       
       - name: Install dependencies
         run: npm install
+
+      - name: Install SonarScanner
+        run: |
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+          sudo mv sonar-scanner-5.0.1.3006-linux /opt/sonar-scanner
+          echo "/opt/sonar-scanner/bin" >> $GITHUB_PATH
         
       - name: Run tests with coverage
         run: npm run coverage
-
+      
       - name: SonarQube Scan
         run: sonar-scanner -Dsonar.projectKey=sonar_test -Dsonar.host.url=https://sonarqube.company.com -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
