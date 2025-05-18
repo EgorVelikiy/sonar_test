@@ -46,13 +46,16 @@ jobs:
         image: sonarqube:community
         ports:
           - 9000:9000
+        env:
+          SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
         options: >-
-          --health-cmd="curl --fail http://localhost:9000/api/system/health || exit 1"
+          --shm-size=1g
+          --ulimit nofile=65536:65536
+          --ulimit nproc=4096:4096
+          --health-cmd="curl --fail http://localhost:9000/api/system/health | grep -q 'GREEN'"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=20
-        env:
-          SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
     
     steps:
       - name: Checkout code
