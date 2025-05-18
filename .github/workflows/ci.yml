@@ -38,54 +38,26 @@ jobs:
       - name: Run tests
         run: npm test
            
-  sonar:
+  sonarqube:
+    name: SonarQube
     runs-on: ubuntu-latest
-
-    services:
-      sonarqube:
-        image: sonarqube:community
-        ports:
-          - 9000:9000
-        env:
-          SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
-        options: >-
-          --shm-size=1g
-          --ulimit nofile=65536:65536
-          --ulimit nproc=4096:4096
-          --health-cmd="curl --fail http://localhost:9000/api/system/health | grep -q 'GREEN'"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=20
-    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
-      - name: Wait SonarQube
-        run: |
-          echo "Waiting for SonarQube..."
-          sleep 60
-
       - name: Install dependencies
         run: npm install
         
-      - name: Tests coverage
+      - name: Run tests with coverage
         run: npm run coverage
-      
+
       - name: SonarQube Scan
-        run: |
-          npm install -g sonar-scanner
-          sonar-scanner \
-            -Dsonar.projectKey=sonar_test \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.login=admin \
-            -Dsonar.password=${{ secrets.SONAR_TOKEN }}
-      
-      - name: Check Quality Gate
-        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Check Quality Gate status
+        uses: SonarSource/sonarqube-quality-gate-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
