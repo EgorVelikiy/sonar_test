@@ -37,32 +37,52 @@ jobs:
 
       - name: Run tests
         run: npm test
-            
-  sonarqube:
-    name: SonarQube
+           
+  sonar:
     runs-on: ubuntu-latest
+
+    services:
+      sonarqube:
+        image: sonarqube:community
+        ports:
+          - 9000:9000
+        options: >-
+          --health-cmd="curl --fail http://localhost:9000/api/system/health || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=20
+        env:
+          SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
+      - name: Wait SonarQube
+        run: |
+          echo "Waiting for SonarQube..."
+          sleep 60
+
       - name: Install dependencies
         run: npm install
-
-      - name: Install SonarScanner
-        run: |
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
-          unzip sonar-scanner-cli-5.0.1.3006-linux.zip
-          sudo mv sonar-scanner-5.0.1.3006-linux /opt/sonar-scanner
-          echo "/opt/sonar-scanner/bin" >> $GITHUB_PATH
         
-      - name: Run tests with coverage
+      - name: Tests coverage
         run: npm run coverage
       
       - name: SonarQube Scan
-        run: sonar-scanner -Dsonar.projectKey=sonar_test -Dsonar.host.url=https://sonarqube.company.com -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
-      - name: Check Quality Gate status
         run: |
-
-          curl -u ${{ secrets.SONAR_TOKEN }} "http://sonarqube.company.com/api/qualitygates/project_status?projectKey=sonar_test
+          npm install -g sonar-scanner
+          sonar-scanner \
+            -Dsonar.projectKey=sonar_test \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.login=admin \
+            -Dsonar.password=${{ secrets.SONAR_TOKEN }}
+      
+      - name: Check Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
