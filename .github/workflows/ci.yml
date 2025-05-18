@@ -56,9 +56,10 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Check Quality Gate status
-        if: github.ref == 'refs/heads/main'
-        uses: SonarSource/sonarqube-quality-gate-action@master
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
