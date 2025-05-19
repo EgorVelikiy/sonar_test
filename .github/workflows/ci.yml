@@ -71,7 +71,6 @@ jobs:
 
           if ($status -eq "OK") {
               Write-Host "Quality Gate Passed"
-              exit 1
           } else {
               Write-Host "Quality Gate Failed"
               exit 1
