@@ -51,10 +51,10 @@ jobs:
       - name: Run tests with coverage
         run: npm run coverage
 
-      - name: Set up SonarQube Scanner
-        run: |
-          echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> $GITHUB_ENV
-          echo "SONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }}" >> $GITHUB_ENV
+      # - name: Set up SonarQube Scanner
+      #   run: |
+      #     echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> $GITHUB_ENV
+      #     echo "SONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }}" >> $GITHUB_ENV
  
       - name: SonarQube Scan
         run: |
@@ -63,27 +63,18 @@ jobs:
       - name: Wait for SonarQube analysis to finish
         run: |
           sleep 10
-        
+      
       - name: Get Quality Gate Status
         id: quality_gate
         run: |
-          $result = Invoke-RestMethod -Uri "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=sonar_test" -Headers @{Authorization = "Basic $([Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(':${{ secrets.SONAR_TOKEN }}')))"}
-
-  # sonarqube:
-  #   name: SonarQube
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-      
-  #     - name: Install dependencies
-  #       run: npm install
-        
-  #     - name: Run tests with coverage
-  #       run: npm run coverage
-
-  #     - name: Run SonarScanner
-  #       env:
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #       run: npx sonar-scanner
+          result=$(curl -u :${{ secrets.SONAR_TOKEN }} "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=sonar_test")
+          
+          if [[ "$(echo $result | jq -r .projectStatus.status)" != "OK" ]]; then
+            echo "Quality Gate failed: $(echo $result | jq -r .projectStatus.status)"
+            exit 1
+          else
+            echo "Quality Gate passed"
+          fi
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
