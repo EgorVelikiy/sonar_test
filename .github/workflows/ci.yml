@@ -52,16 +52,18 @@ jobs:
         run: npm run coverage
 
       - name: Set up SonarQube Scanner
-        uses: sonarsource/sonarcloud-github-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> $GITHUB_ENV
+          echo "SONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }}" >> $GITHUB_ENV
  
       - name: SonarQube Scan
         run: |
           sonar-scanner \
             -Dsonar.projectKey=sonar_test \
-            -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.projectVersion=1.0 \
+            -Dsonar.sources=./src \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
   # sonarqube:
   #   name: SonarQube
