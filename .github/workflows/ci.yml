@@ -57,7 +57,6 @@ jobs:
           echo "SONAR_HOST_URL=${{ secrets.SONAR_HOST_URL }}" >> $GITHUB_ENV
  
       - name: SonarQube Scan
-        shell: pwsh
         run: |
           .\sonar-scanner\bin\sonar-scanner.bat -Dsonar.projectKey=sonar_test -Dsonar.sources=./src -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
