@@ -59,11 +59,11 @@ jobs:
       - name: SonarQube Scan
         run: |
           sonar-scanner \
-            -Dsonar.projectKey=sonar_test `
-            -Dsonar.projectVersion=1.0 `
-            -Dsonar.sources=./src `
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} `
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -D"sonar.projectKey=sonar_test" `
+            -D"sonar.projectVersion=1.0" `
+            -D"sonar.sources=./src" `
+            -D"sonar.login=${{ secrets.SONAR_TOKEN }}"" `
+            -D"sonar.host.url=${{ secrets.SONAR_HOST_URL }}"
 
   # sonarqube:
   #   name: SonarQube
