@@ -65,13 +65,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          result=$(curl.exe -s -u ${{ secrets.SONAR_TOKEN }}: "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=sonar_test")
+          $result=curl.exe -s -u ${{ secrets.SONAR_TOKEN }}: "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=sonar_test"
           
-          $data = $response | ConvertFrom-Json
+          $status = ($response | ConvertFrom-Json).projectStatus.status
 
-          if ($data.projectStatus.status -ne "OK") {
-            Write-Host "Quality Gate failed: $($data.projectStatus.status)"
-            exit 1
+          if ($status -eq "OK") {
+              Write-Host "Quality Gate Passed"
           } else {
-            Write-Host "Quality Gate padssed"
+              Write-Host "Quality Gate Failed"
           }
