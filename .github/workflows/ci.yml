@@ -58,7 +58,7 @@ jobs:
  
       - name: SonarQube Scan
         run: |
-          .\sonar-scanner\bin\sonar-scanner.bat -Dsonar.projectKey=sonar_test -Dsonar.sources=./src -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+          sonar-scanner -Dsonar.projectKey=sonar_test -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
   # sonarqube:
   #   name: SonarQube
