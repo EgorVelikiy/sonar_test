@@ -59,18 +59,18 @@ jobs:
         run: |
           sleep 10
       
-      # - name: Get Quality Gate Status
-      #   id: quality_gate
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      #   run: |
-      #     $result=curl.exe -s -u ${{ secrets.SONAR_TOKEN }}: "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=sonar_test"
+      - name: Get Quality Gate Status
+        id: quality_gate
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          $result=curl.exe -i -v -u ${{ secrets.SONAR_TOKEN }}: "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=sonar_test"
           
-      #     $status = ($response | ConvertFrom-Json).projectStatus.status
+          $status = ($result | ConvertFrom-Json).projectStatus.status
 
-      #     if ($status -eq "OK") {
-      #         Write-Host "Quality Gate Passed"
-      #     } else {
-      #         Write-Host "Quality Gate Failed"
-      #     }
+          if ($status -eq "OK") {
+              Write-Host "Quality Gate Passed"
+          } else {
+              Write-Host "Quality Gate Failed"
+          }
