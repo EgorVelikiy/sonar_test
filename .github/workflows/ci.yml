@@ -58,7 +58,7 @@ jobs:
  
       - name: SonarQube Scan
         run: |
-          sonar-scanner -Dsonar.projectKey=sonar_test -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+          sonar-scanner -D"sonar.projectKey=sonar_test" -D`sonar.login=${{ secrets.SONAR_TOKEN }}` -D`sonar.host.url=${{ secrets.SONAR_HOST_URL }}`
 
   # sonarqube:
   #   name: SonarQube
