@@ -60,6 +60,15 @@ jobs:
         run: |
           sonar-scanner -D"sonar.login=${{ secrets.SONAR_TOKEN }}" -D"sonar.host.url=${{ secrets.SONAR_HOST_URL }}"
 
+      - name: Wait for SonarQube analysis to finish
+        run: |
+          sleep 10
+        
+      - name: Get Quality Gate Status
+        id: quality_gate
+        run: |
+          $result = Invoke-RestMethod -Uri "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=sonar_test" -Headers @{Authorization = "Basic $([Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(':${{ secrets.SONAR_TOKEN }}')))"}
+
   # sonarqube:
   #   name: SonarQube
   #   runs-on: ubuntu-latest
