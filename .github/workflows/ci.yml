@@ -51,11 +51,11 @@ jobs:
       - name: Run tests with coverage
         run: npm run coverage
       
-      # - name: Install SonarScanner
-      #   run: |
-      #     curl -Lo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-windows.zip
-      #     tar -xf sonar-scanner.zip
-      #     echo "${PWD}/sonar-scanner-5.0.1.3006-windows/bin" >> $GITHUB_PATH
+      - name: Install SonarScanner
+        run: |
+          curl.exe -Lo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-windows.zip
+          tar -xf sonar-scanner.zip
+          echo "${PWD}/sonar-scanner-5.0.1.3006-windows/bin" >> $GITHUB_PATH
 
       - name: SonarQube Scan
         run: |
