@@ -15,7 +15,13 @@ const storage = multer.diskStorage({
     }
 });
   
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024,
+        files: 1
+    }
+});
 
 const uploadImage = async (req, res) => {
     upload.single('file') (req, res, async(err) => {
