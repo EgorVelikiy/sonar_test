@@ -13,8 +13,16 @@ const app = express();
 app.use('/public', express.static(path.join(__dirname, '../public')));
 
 const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+
+    if (/^http:\/\/localhost(:\d+)?$/.test(origin) || /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-  credentials: true
 };
 
 app.use(cors(corsOptions));
