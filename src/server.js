@@ -13,7 +13,6 @@ const app = express();
 app.use('/public', express.static(path.join(__dirname, '../public')));
 
 const corsOptions = {
-  origin: ['https://your-trusted-domain.com', 'http://localhost:3000'],
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true
 };
