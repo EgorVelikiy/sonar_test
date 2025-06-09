@@ -3,12 +3,12 @@ pipeline {
 
     tools {
         nodejs 'DefaultNodeJS'
-        hudson.plugins.sonar.SonarRunnerInstallation 'sonar_test'
     }
 
     environment {
         SONAR_TOKEN = credentials('sonarqube-token')
-        sonar_home = tool 'sonar_test_server'
+        SONAR_HOME = tool 'sonar_test'
+        SONAR_PROJECT_KEY = 'sonar_test'
     }
 
     stages {
@@ -40,9 +40,10 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonar_test_server') {
                     bat """
-                        ${sonar_home}/bin/sonar-scanner ^
-                        -Dsonar.projectKey=sonar_test ^
+                        ${SONAR_HOME}/bin/sonar-scanner ^
+                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} ^
                         -Dsonar.sources=src/ ^
+                        -Dsonar.host.url=http://localhost:9000 ^
                         -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info ^
                         -Dsonar.login=%SONAR_TOKEN% ^
                         -Dsonar.coverage.exclusions=src/routes/**,src/config/**,src/tests/**,src/server.js
